@@ -23,17 +23,47 @@ async function run() {
   await client.db("admin").command({ping: 1});
   console.log("successfully connected to MongoDB!");
 
-  const defaultCollection = client.db("TechVentureDB").collection("default");
+  const userCollection = client.db("techventureDB").collection("users");
+  const brandCollection = client.db("techventureDB").collection("brands");
+  const productCollection = client.db("techventureDB").collection("products");
 
-  app.get("/", async (req, res) => {
-    const result = await defaultCollection.find().toArray();
+  app.post("/users", async (req, res) => {
+    const user = req.body;
+    const result = await userCollection.insertOne(user);
+    res.send(result);
+  });
+  app.patch("/users", async (req, res) => {
+    const user = req.body;
+    const filter = { email: user.email };
+    const updateDoc = { 
+      $set: {
+        name: user.name,
+        photo: user.photoURL,
+        lastSignInTime: user.lastSignInTime
+      } 
+    };
+    const result = await userCollection.updateOne(filter, updateDoc);
+    res.send(result);
+  });
+  app.post("/brands", async (req, res) => {
+    const brand = req.body;
+    const result = await brandCollection.insertOne(brand);
+    res.send(result);
+  });
+  app.get("/brands", async (req, res) => {
+    const result = await brandCollection.find().toArray();
+    res.send(result);
+  });
+  app.post("/products", async (req, res) => {
+    const product = req.body;
+    const result = await productCollection.insertOne(product);
     res.send(result);
   });
 }
 run().catch(console.dir);
 
-app.get("/status", (req, res) => {
-  res.send("techventure server is running");
+app.get("/", async (req, res) => {
+  res.send("TechVenture Server is running ...");
 });
 
 app.listen(port, () => {
