@@ -26,6 +26,7 @@ async function run() {
   const userCollection = client.db("techventureDB").collection("users");
   const brandCollection = client.db("techventureDB").collection("brands");
   const productCollection = client.db("techventureDB").collection("products");
+  const userProductCollection = client.db("techventureDB").collection("userProducts");
 
   app.post("/users", async (req, res) => {
     const user = req.body;
@@ -99,7 +100,18 @@ async function run() {
     const result = await productCollection.insertOne(product);
     res.send(result);
   });
+
+  app.post("/userProducts", async (req, res) => {
+    const userProduct = req.body;
+    const result = await userProductCollection.insertOne(userProduct);
+    res.send(result);
+  })
+
+
+
+
 }
+
 run().catch(console.dir);
 
 app.get("/", async (req, res) => {
