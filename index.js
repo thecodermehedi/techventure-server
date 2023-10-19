@@ -34,13 +34,13 @@ async function run() {
   });
   app.patch("/users", async (req, res) => {
     const user = req.body;
-    const filter = { email: user.email };
-    const updateDoc = { 
+    const filter = {email: user.email};
+    const updateDoc = {
       $set: {
         name: user.name,
         photo: user.photoURL,
-        lastSignInTime: user.lastSignInTime
-      } 
+        lastSignInTime: user.lastSignInTime,
+      },
     };
     const result = await userCollection.updateOne(filter, updateDoc);
     res.send(result);
@@ -54,6 +54,11 @@ async function run() {
     const result = await brandCollection.find().toArray();
     res.send(result);
   });
+  app.get("/products", async (req, res) => {
+    const result = await productCollection.find().toArray();
+    res.send(result);
+  });
+
   app.post("/products", async (req, res) => {
     const product = req.body;
     const result = await productCollection.insertOne(product);
