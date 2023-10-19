@@ -79,7 +79,6 @@ async function run() {
     const id = req.params.id;
     const updateProduct = req.body;
     const filter = {_id: new ObjectId(id)};
-    const options = { upsert: true };
     const updateDoc = {
       $set: {
         name: updateProduct.name,
@@ -91,7 +90,7 @@ async function run() {
         photoURL: updateProduct.photoURL
       }
     };
-    const result = await userCollection.updateOne(filter, updateDoc, options);
+    const result = await productCollection.updateOne(filter, updateDoc);
     res.send(result);
   });
 
