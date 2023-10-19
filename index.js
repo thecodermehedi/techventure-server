@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const {MongoClient, ServerApiVersion} = require("mongodb");
+const {MongoClient, ServerApiVersion, ObjectId} = require("mongodb");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -49,9 +49,9 @@ async function run() {
     const result = await brandCollection.find().toArray();
     res.send(result);
   });
-  app.get("/brands/:id", async (req, res) => {
-    const id = req.params.id;
-    const query = {name: id};
+  app.get("/brands/:name", async (req, res) => {
+    const name = req.params.name;
+    const query = {name: name};
     const result = await brandCollection.findOne(query);
     res.send(result);
   });
@@ -61,12 +61,36 @@ async function run() {
     res.send(result);
   });
 
-  app.get("/products/:id", async (req, res) => {
-    const id = req.params.id;
-    const query = {
-      brand : id
-    };
+  app.get("/products/brand/:brand", async (req, res) => {
+    const brand = req.params.brand;
+    const query = { brand: brand };
     const result = await productCollection.find(query).toArray();
+    res.send(result);
+  });
+
+  app.get("/products/id/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await productCollection.findOne(query);
+    res.send(result);
+  });
+
+  app.patch("/products/id/:id", async (req, res) => {
+    const id = req.params.id;
+    const updatedInfo = req.body;
+    const filter = {_id: new ObjectId(id)};
+    const updateDoc = {
+      $set: {
+        name: updatedInfo.name,
+        brand: updatedInfo.brand,
+        type: updatedInfo.type,
+        price: updatedInfo.price,
+        details: updatedInfo.details,
+        rating: updatedInfo.rating,
+        photoURL: updatedInfo.photoURL
+      }
+    };
+    const result = await userCollection.updateOne(filter, updateDoc);
     res.send(result);
   });
 
