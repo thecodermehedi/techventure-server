@@ -45,17 +45,26 @@ async function run() {
     const result = await userCollection.updateOne(filter, updateDoc);
     res.send(result);
   });
-  app.post("/brands", async (req, res) => {
-    const brand = req.body;
-    const result = await brandCollection.insertOne(brand);
-    res.send(result);
-  });
   app.get("/brands", async (req, res) => {
     const result = await brandCollection.find().toArray();
     res.send(result);
   });
+  app.get("/brands/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = {name: id};
+    const result = await brandCollection.findOne(query);
+    res.send(result);
+  });
+
   app.get("/products", async (req, res) => {
     const result = await productCollection.find().toArray();
+    res.send(result);
+  });
+
+  app.get("/products/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = {brand: id};
+    const result = await productCollection.findOne(query);
     res.send(result);
   });
 
