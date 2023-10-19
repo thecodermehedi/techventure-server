@@ -75,7 +75,7 @@ async function run() {
     res.send(result);
   });
 
-  app.patch("/products/id/:id", async (req, res) => {
+  app.put("/products/id/:id", async (req, res) => {
     const id = req.params.id;
     const updatedInfo = req.body;
     const filter = {_id: new ObjectId(id)};
