@@ -26,7 +26,9 @@ async function run() {
   const userCollection = client.db("techventureDB").collection("users");
   const brandCollection = client.db("techventureDB").collection("brands");
   const productCollection = client.db("techventureDB").collection("products");
-  const userProductCollection = client.db("techventureDB").collection("userProducts");
+  const userProductCollection = client
+    .db("techventureDB")
+    .collection("userProducts");
 
   app.post("/users", async (req, res) => {
     const user = req.body;
@@ -64,7 +66,7 @@ async function run() {
 
   app.get("/products/brand/:brand", async (req, res) => {
     const brand = req.params.brand;
-    const query = { brand: brand };
+    const query = {brand: brand};
     const result = await productCollection.find(query).toArray();
     res.send(result);
   });
@@ -88,8 +90,8 @@ async function run() {
         price: updateProduct.price,
         details: updateProduct.details,
         rating: updateProduct.rating,
-        photoURL: updateProduct.photoURL
-      }
+        photoURL: updateProduct.photoURL,
+      },
     };
     const result = await productCollection.updateOne(filter, updateDoc);
     res.send(result);
@@ -101,15 +103,34 @@ async function run() {
     res.send(result);
   });
 
+  app.get("/userProducts", async (req, res) => {
+    const result = await userProductCollection.find().toArray();
+    res.send(result);
+  });
+
+  app.get("/userProducts/:email", async (req, res) => {
+    const email = req.params.email;
+    const query = {email: email};
+    const result = await userProductCollection.find(query).toArray();
+    res.send(result);
+  });
+
   app.post("/userProducts", async (req, res) => {
     const userProduct = req.body;
     const result = await userProductCollection.insertOne(userProduct);
     res.send(result);
-  })
+  });
 
-
-
-
+  app.delete("/userProducts/:email/:id", async (req, res) => {
+    const email = req.params.email;
+    const id = req.params.id;
+    const filter = {
+      email: email,
+      _id: new ObjectId(id),
+    };
+    const result = await userProductCollection.deleteOne(filter);
+    res.send(result);
+  });
 }
 
 run().catch(console.dir);
